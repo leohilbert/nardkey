@@ -1,0 +1,2 @@
+# MSKLC/kbdutool only read UTF-16 LE; git stores UTF-8 so diffs stay readable.
+*.klc working-tree-encoding=UTF-16LE-BOM eol=crlf
