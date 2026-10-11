@@ -1,7 +1,12 @@
-# Installs NardKey from dist\ and makes it the only input method of the current user.
-# Usage: powershell -ExecutionPolicy Bypass -File install.ps1   (asks for admin once)
-# Same result as MSKLC's setup.exe, plus switching the user over.
-param([switch]$MachinePart)
+# Installs NardKey from dist\ for the current user (asks for admin once).
+# Usage: powershell -ExecutionPolicy Bypass -File install.ps1 [-Mode Ask|Add|Only]
+#   Add  = add NardKey next to your existing layouts (switch with Win+Space)
+#   Only = make NardKey the ONLY layout (removes all other input languages/layouts)
+#   Ask  = prompt (default, answer defaults to Add)
+param(
+    [ValidateSet('Ask', 'Add', 'Only')][string]$Mode = 'Ask',
+    [switch]$MachinePart
+)
 $ErrorActionPreference = 'Stop'
 $layouts = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
 
@@ -43,7 +48,15 @@ if ($MachinePart) {
     return
 }
 
-# --- as the user: run the machine part elevated, then switch this user over ---
+# --- as the user: ask, run the machine part elevated, then set up this user ---
+if ($Mode -eq 'Ask') {
+    Write-Host ''
+    Write-Host 'Should NardKey be your ONLY keyboard layout?'
+    Write-Host '  y = remove ALL other input languages and layouts; only English (US) + NardKey remains'
+    Write-Host '  n = keep everything, just add NardKey (switch layouts with Win+Space)'
+    $Mode = if ((Read-Host 'Only NardKey? [y/N]') -match '^\s*[yj]') { 'Only' } else { 'Add' }
+}
+
 $p = Start-Process powershell.exe -Verb RunAs -Wait -PassThru -ArgumentList `
     "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -MachinePart"
 if ($p.ExitCode -ne 0) { throw "Machine part failed (exit $($p.ExitCode))" }
@@ -52,13 +65,19 @@ $key = Get-NardKeyKey
 if (-not $key) { throw 'NardKey not registered - did the admin prompt get declined?' }
 $tip = '0409:' + $key.ToUpper()
 
-# Only NardKey: one language (en-US) with one keyboard. Other languages would drag their
-# default layouts back in. Regional format and display language are separate settings.
-$list = New-WinUserLanguageList en-US
-$list[0].InputMethodTips.Clear()
-$list[0].InputMethodTips.Add($tip)
+if ($Mode -eq 'Only') {
+    # One language (en-US) with one keyboard - other languages would drag their default
+    # layouts back in. Regional format and display language are separate settings.
+    $list = New-WinUserLanguageList en-US
+    $list[0].InputMethodTips.Clear()
+} else {
+    $list = Get-WinUserLanguageList
+    if (-not ($list | Where-Object LanguageTag -eq 'en-US')) { $list.Add('en-US') }
+}
+$en = $list | Where-Object LanguageTag -eq 'en-US'
+if ($en.InputMethodTips -notcontains $tip) { $en.InputMethodTips.Add($tip) }
 Set-WinUserLanguageList $list -Force -WarningAction SilentlyContinue
-Set-WinDefaultInputMethodOverride -InputTip $tip
+if ($Mode -eq 'Only') { Set-WinDefaultInputMethodOverride -InputTip $tip }
 
 # Running apps keep their old layout until sign-out; switch every open window now.
 Add-Type -Namespace NardKey -Name Win32 -MemberDefinition @'
@@ -70,4 +89,4 @@ public delegate bool EnumProc(System.IntPtr h, System.IntPtr l);
 $hkl = [NardKey.Win32]::LoadKeyboardLayout($key, 1)  # KLF_ACTIVATE
 [NardKey.Win32]::EnumWindows({ param($h, $l) [NardKey.Win32]::PostMessage($h, 0x50, [IntPtr]::Zero, $hkl) | Out-Null; $true }, [IntPtr]::Zero) | Out-Null  # WM_INPUTLANGCHANGEREQUEST
 
-"NardKey installed ($key) and active. Sign out/in if an app still uses the old layout."
+"NardKey installed ($key, mode: $Mode) and active. Sign out/in if an app still uses the old layout."

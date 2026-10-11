@@ -26,11 +26,17 @@ Firmware example: Epomaker Galaxy100 keymap
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
-Asks for admin once, copies the prebuilt DLLs from `dist\` to System32/SysWOW64,
-registers the layout and makes **NardKey the only input method** of the current
-user (language list = English (United States) with NardKey). Open apps are
-switched over immediately; sign out/in if one still uses the old layout.
-Re-run it after rebuilding to update.
+Asks for admin once, copies the prebuilt DLLs from `dist\` to System32/SysWOW64
+and registers the layout. Then it asks whether NardKey should be your **only**
+layout:
+
+- **n** (default, `-Mode Add`): NardKey is added under English (United States),
+  everything else stays. Switch with Win+Space.
+- **y** (`-Mode Only`): removes **all** other input languages and layouts; only
+  English (United States) + NardKey remains.
+
+Open apps are switched to NardKey immediately; sign out/in if one still uses the
+old layout. Re-run it after rebuilding to update.
 
 ## Build
 
