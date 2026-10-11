@@ -20,14 +20,28 @@ Firmware example: Epomaker Galaxy100 keymap
 [`nardkey`](https://github.com/leohilbert/qmk_firmware/tree/master/keyboards/epomaker/galaxy100/keymaps/nardkey)
 — left Ctrl + left Alt or right Alt + A/O/U/S → umlauts, Shift for capitals.
 
-## Install
+## Install (Windows x64)
 
-1. Install Microsoft Keyboard Layout Creator 1.4 (Microsoft Download Center).
-2. Open `nardkey.klc` (File → Load Source File).
-3. Project → Build DLL and Setup Package.
-4. Run the generated `setup.exe`, then sign out/in.
-5. Settings → Time & language → Language & region → English (United States) →
-   Keyboards → add **NardKey - US with German umlauts**.
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
 
-`nardkey.klc` must stay UTF-16 LE — MSKLC silently fails on UTF-8.
-`.gitattributes` handles that on checkout.
+Asks for admin once, copies the prebuilt DLLs from `dist\` to System32/SysWOW64,
+registers the layout and makes **NardKey the only input method** of the current
+user (language list = English (United States) with NardKey). Open apps are
+switched over immediately; sign out/in if one still uses the old layout.
+Re-run it after rebuilding to update.
+
+## Build
+
+Needs Microsoft Keyboard Layout Creator 1.4 (for `kbdutool`).
+
+```powershell
+powershell -ExecutionPolicy Bypass -File build.ps1
+```
+
+Rebuilds `dist\amd64` and `dist\wow64` from `nardkey.klc`. Commit the result so
+other machines can install without MSKLC.
+
+`nardkey.klc` must stay UTF-16 LE — kbdutool silently produces nothing from
+UTF-8. `.gitattributes` handles that on checkout.
