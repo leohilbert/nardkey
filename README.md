@@ -35,8 +35,14 @@ layout:
 - **y** (`-Mode Only`): removes **all** other input languages and layouts; only
   English (United States) + NardKey remains.
 
+Either way it removes layouts from the list whose registry entry no longer
+exists (Settings shows them as invalid). Windows silently fell back to plain US
+at sign-in while such an entry was in the list.
+
 Open apps are switched to NardKey immediately; sign out/in if one still uses the
 old layout. Re-run it after rebuilding to update.
+
+Uninstall: `powershell -ExecutionPolicy Bypass -File uninstall.ps1`
 
 ## Build
 
@@ -51,3 +57,7 @@ other machines can install without MSKLC.
 
 `nardkey.klc` must stay UTF-16 LE — kbdutool silently produces nothing from
 UTF-8. `.gitattributes` handles that on checkout.
+
+Don't use the MSKLC GUI's "Build DLL and Setup Package": MSKLC 1.4 crashes
+whenever kbdutool prints a warning, and the ü scancode `0x7D` always warns
+("new scancode"). The DLL itself is fine.
