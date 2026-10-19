@@ -116,3 +116,4 @@ $hkl = [NardKey.Win32]::LoadKeyboardLayout($key, 1)  # KLF_ACTIVATE
 [NardKey.Win32]::EnumWindows({ param($h, $l) [NardKey.Win32]::PostMessage($h, 0x50, [IntPtr]::Zero, $hkl) | Out-Null; $true }, [IntPtr]::Zero) | Out-Null  # WM_INPUTLANGCHANGEREQUEST
 
 "NardKey installed ($key, mode: $Mode) and active. Sign out/in if an app still uses the old layout."
+"Updating an existing install? Sign out/in: Windows keeps the old version loaded until then."
