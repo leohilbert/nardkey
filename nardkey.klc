@@ -19,9 +19,10 @@ VERSION	1.0
 //   73  0x87 Intl1 (Ro)    KC_INT1       ö Ö
 //   7d  0x89 Intl3 (Yen)   KC_INT3       ü Ü
 //   7e  0x85 Keypad Comma  KC_KP_COMMA   ß ẞ
+//   70  0x88 Intl2 (Kana)  KC_INT2       € €
 //
-// The umlauts are also on AltGr + A/O/U/S (EurKEY style) so the layout works on any
-// keyboard without custom firmware.
+// The umlauts and € are also on AltGr + A/O/U/S/E (EurKEY style) so the layout works
+// on any keyboard without custom firmware.
 //
 // Build with build.ps1 / install with install.ps1, not MSKLC's "Build DLL and Setup
 // Package": MSKLC 1.4 crashes there whenever kbdutool prints a warning (missing
@@ -54,7 +55,7 @@ LAYOUT		;an extra '@' at the end is a dead key
 0d	OEM_PLUS	0	003d	002b	-1	-1	-1		// = +
 10	Q		1	q	Q	-1	-1	-1
 11	W		1	w	W	-1	-1	-1
-12	E		1	e	E	-1	-1	-1
+12	E		1	e	E	-1	20ac	-1		// AltGr: €
 13	R		1	r	R	-1	-1	-1
 14	T		1	t	T	-1	-1	-1
 15	Y		1	y	Y	-1	-1	-1
@@ -93,6 +94,7 @@ LAYOUT		;an extra '@' at the end is a dead key
 73	ABNT_C1		1	00f6	00d6	-1	-1	-1		// ö Ö
 7d	OEM_8		1	00fc	00dc	-1	-1	-1		// ü Ü
 7e	ABNT_C2		0	00df	1e9e	-1	-1	-1		// ß ẞ
+70	ICO_00		0	20ac	20ac	-1	-1	-1		// € € (kbdutool rejects most VK names here, ICO_00 is free)
 
 KEYNAME
 

@@ -14,8 +14,9 @@ foreach ($arch in @{ amd64 = '-m'; wow64 = '-o' }.GetEnumerator()) {
 
     Push-Location $tmp
     try { $out = & $kbdutool -u $arch.Value nardkey.klc 2>&1 | Out-String } finally { Pop-Location }
-    # kbdutool prints nothing at all for a UTF-8 .klc, so check for the success line
-    if ($out -notmatch 'All tasks completed successfully') { throw "kbdutool $($arch.Key) failed:`n$out" }
+    # kbdutool prints nothing at all for a UTF-8 .klc, and still prints the success
+    # line when the C compile fails (e.g. unknown VK name), so check for the DLL too
+    if ($out -notmatch 'All tasks completed successfully' -or -not (Test-Path "$tmp\nardkey.dll")) { throw "kbdutool $($arch.Key) failed:`n$out" }
 
     $dest = "$PSScriptRoot\dist\$($arch.Key)"
     New-Item -ItemType Directory -Force $dest | Out-Null
