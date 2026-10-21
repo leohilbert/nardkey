@@ -18,11 +18,12 @@ VERSION	1.0
 //   56  0x64 Non-US \|     KC_NUBS       ä Ä
 //   73  0x87 Intl1 (Ro)    KC_INT1       ö Ö
 //   7d  0x89 Intl3 (Yen)   KC_INT3       ü Ü
-//   7e  0x85 Keypad Comma  KC_KP_COMMA   ß €   (firmware sends Shift + 7e for €)
+//   7e  0x85 Keypad Comma  KC_KP_COMMA   ß ẞ
+//   70  0x88 Intl2 (Kana)  KC_INT2       € €
 //
-// € shares the ß key instead of getting its own scancode: kbdutool only knows a few
-// VK names, and the free ones fail (ICO_00 makes Windows type "00", SEPARATOR is
-// treated as a numpad key and types nothing). Capital ẞ is the casualty.
+// kbdutool only knows a few VK names and the free ones misbehave (Windows types "00"
+// for ICO_00, nothing for SEPARATOR), so 0x70 is written as ICO_00 here and build.ps1
+// rewrites that VK to OEM_AX in the compiled DLL.
 //
 // The umlauts and € are also on AltGr + A/O/U/S/E (EurKEY style) so the layout works
 // on any keyboard without custom firmware.
@@ -96,7 +97,8 @@ LAYOUT		;an extra '@' at the end is a dead key
 56	OEM_102		1	00e4	00c4	-1	-1	-1		// ä Ä
 73	ABNT_C1		1	00f6	00d6	-1	-1	-1		// ö Ö
 7d	OEM_8		1	00fc	00dc	-1	-1	-1		// ü Ü
-7e	ABNT_C2		0	00df	20ac	-1	-1	-1		// ß €
+7e	ABNT_C2		0	00df	1e9e	-1	-1	-1		// ß ẞ
+70	ICO_00		0	20ac	20ac	-1	-1	-1		// € € (build.ps1 patches the VK to OEM_AX, see there)
 
 KEYNAME
 

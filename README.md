@@ -12,9 +12,8 @@ software (AutoHotkey) is needed.
 | `0x56` | `0x64` Non-US `\|` | `KC_NUBS` | ä | Ä |
 | `0x73` | `0x87` International1 | `KC_INT1` | ö | Ö |
 | `0x7D` | `0x89` International3 | `KC_INT3` | ü | Ü |
-| `0x7E` | `0x85` Keypad Comma | `KC_KP_COMMA` | ß | € |
-
-For €, firmware sends Shift + `0x7E` (`LSFT(KC_KP_COMMA)`); there is no capital ẞ.
+| `0x7E` | `0x85` Keypad Comma | `KC_KP_COMMA` | ß | ẞ |
+| `0x70` | `0x88` International2 | `KC_INT2` | € | € |
 
 Without such firmware, AltGr + A/O/U/S/E types the same characters.
 Everything else is identical to the standard US layout.
