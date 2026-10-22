@@ -46,6 +46,11 @@ old layout. Re-run it after rebuilding to update.
 
 Uninstall: `powershell -ExecutionPolicy Bypass -File uninstall.ps1`
 
+Keyboard randomly dead or dropping off until replugged? Windows suspends idle
+USB devices during normal use and some keyboards (e.g. the WB32-based Galaxy100)
+miss the wake-up. `disable-usb-suspend.ps1` turns USB selective suspend off in
+the active power plan.
+
 ## Build
 
 Needs Microsoft Keyboard Layout Creator 1.4 (for `kbdutool`).
